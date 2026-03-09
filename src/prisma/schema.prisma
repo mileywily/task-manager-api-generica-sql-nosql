@@ -1,0 +1,33 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Definición de Enums para asegurar integridad de datos
+enum TaskStatus {
+  pending
+  in_progress
+  done
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String?      // El signo ? significa que es opcional
+  status      TaskStatus   @default(pending)
+  priority    TaskPriority @default(medium)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
