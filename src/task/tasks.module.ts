@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
-import { PrismaService } from '../prisma/prisma.service'; // Asegúrate de tenerlo
+import { PrismaService } from '../prisma/prisma.service';
 import { PrismaGenericRepository } from '../common/repositories/prisma-generic.repository';
 
 @Module({
   controllers: [TasksController],
   providers: [
     TasksService,
-    PrismaService,
+    // Registramos PrismaService para que esté disponible en el Factory
+    PrismaService, 
     {
       provide: 'TASKS_REPOSITORY',
-      // Aquí podrías usar un Factory para elegir entre SQL/NoSQL según .env
+      // Factory: Instanciamos el repositorio genérico pasando el modelo de la tabla 'task'
       useFactory: (prisma: PrismaService) => {
-        return new PrismaGenericRepository<any>(prisma.task); // 'task' es el modelo en schema.prisma
+        return new PrismaGenericRepository<any>(prisma.task);
       },
       inject: [PrismaService],
     },
